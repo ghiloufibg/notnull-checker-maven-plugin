@@ -7,6 +7,7 @@ import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.google.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -92,6 +93,9 @@ public class SourceScanner {
 
       // Collect lambda return null literal
       candidates.addAll(nodeScanner.findAllLambdaReturnNullLiteral(cu, fileName));
+
+      // Collect record parameters
+      candidates.addAll(nodeScanner.findAllRecordComponents(cu, fileName));
 
     } catch (IOException | ParseProblemException e) {
       throw new RuntimeException(

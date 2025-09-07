@@ -58,3 +58,5 @@ public class SampleClass<T> {
     arr[0] = null;
   }
 }
+
+record  Person(String name) {}

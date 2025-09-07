@@ -4,11 +4,7 @@ import com.ghiloufi.notnullchecker.validation.ViolationCandidate;
 import com.ghiloufi.notnullchecker.validation.ViolationCandidateEnum;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
@@ -28,6 +24,7 @@ public class NodeScanner {
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
 
     return cu.findAll(FieldDeclaration.class).stream()
+        .parallel()
         .map(
             field ->
                 new ViolationCandidate(
@@ -44,6 +41,7 @@ public class NodeScanner {
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
 
     return cu.findAll(MethodDeclaration.class).stream()
+        .parallel()
         .map(MethodDeclaration::getParameters)
         .flatMap(Collection::stream)
         .map(
@@ -62,6 +60,7 @@ public class NodeScanner {
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
 
     return cu.findAll(LambdaExpr.class).stream()
+        .parallel()
         .map(LambdaExpr::getParameters)
         .flatMap(Collection::stream)
         .map(
@@ -80,6 +79,7 @@ public class NodeScanner {
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
 
     return cu.findAll(ConstructorDeclaration.class).stream()
+        .parallel()
         .map(ConstructorDeclaration::getParameters)
         .flatMap(Collection::stream)
         .map(
@@ -98,6 +98,7 @@ public class NodeScanner {
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
 
     return cu.findAll(TypeParameter.class).stream()
+        .parallel()
         .map(
             typeParam ->
                 new ViolationCandidate(
@@ -117,6 +118,7 @@ public class NodeScanner {
   List<ViolationCandidate> findAllGenericElements(
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
     return cu.findAll(FieldDeclaration.class).stream()
+        .parallel()
         .flatMap(
             fieldDeclaration ->
                 fieldDeclaration.getVariables().stream()
@@ -135,6 +137,7 @@ public class NodeScanner {
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
 
     return cu.findAll(MethodDeclaration.class).stream()
+        .parallel()
         .filter(
             method -> {
               var type = method.getType();
@@ -156,6 +159,7 @@ public class NodeScanner {
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
 
     return cu.findAll(MethodDeclaration.class).stream()
+        .parallel()
         .filter(method -> !method.getType().isVoidType() && !method.getType().isPrimitiveType())
         .filter(
             method ->
@@ -180,6 +184,7 @@ public class NodeScanner {
 
     final var localNullAssignments =
         cu.findAll(VariableDeclarator.class).stream()
+            .parallel()
             .filter(
                 variableDeclarator ->
                     variableDeclarator.getInitializer().isPresent()
@@ -197,6 +202,7 @@ public class NodeScanner {
 
     final var localNullReassignments =
         cu.findAll(AssignExpr.class).stream()
+            .parallel()
             .filter(assign -> assign.getValue().isNullLiteralExpr())
             .map(
                 assign ->
@@ -216,6 +222,7 @@ public class NodeScanner {
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
 
     return cu.findAll(MethodCallExpr.class).stream()
+        .parallel()
         .flatMap(
             call ->
                 call.getArguments().stream()
@@ -236,6 +243,7 @@ public class NodeScanner {
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
 
     return cu.findAll(ObjectCreationExpr.class).stream()
+        .parallel()
         .flatMap(
             ctor ->
                 ctor.getArguments().stream()
@@ -256,6 +264,7 @@ public class NodeScanner {
       @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
 
     return cu.findAll(LambdaExpr.class).stream()
+        .parallel()
         .filter(
             lambda -> {
               if (lambda.getBody().isExpressionStmt()) {
@@ -286,6 +295,23 @@ public class NodeScanner {
                     sourceFile.toString(),
                     lambda.getRange().map(Range::toString).orElse(""),
                     List.of()))
+        .toList();
+  }
+
+  List<ViolationCandidate> findAllRecordComponents(
+      @NotNull final CompilationUnit cu, @NotNull final Path sourceFile) {
+    return cu.findAll(RecordDeclaration.class).stream()
+        .parallel()
+        .flatMap(recordDecl -> recordDecl.getParameters().stream())
+        .map(
+            param ->
+                new ViolationCandidate(
+                    ViolationCandidateEnum.RECORD_COMPONENT,
+                    param.getName().asString(),
+                    param.getType().asString(),
+                    sourceFile.toString(),
+                    param.getRange().map(Range::toString).orElse(""),
+                    param.getAnnotations()))
         .toList();
   }
 

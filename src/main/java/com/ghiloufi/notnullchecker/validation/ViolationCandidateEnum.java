@@ -14,6 +14,7 @@ public enum ViolationCandidateEnum {
   METHOD_NULL_ARGUMENT("Method null argument"),
   CONSTRUCTOR_NULL_ARGUMENT("Constructor null argument"),
   LAMBDA_RETURN_NULL_LITERAL("Lambda return null"),
+  RECORD_COMPONENT("Record component"),
   LAMBDA_PARAMETER("Lambda parameter");
 
   private final String value;

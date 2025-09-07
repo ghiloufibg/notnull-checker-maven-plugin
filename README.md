@@ -14,8 +14,6 @@ It helps prevent `NullPointerException`s by ensuring critical elements in your c
 
 ---
 
-## To-Do / Next Steps
-
 ### ✅ Already implemented
 
 - Fields
@@ -28,16 +26,6 @@ It helps prevent `NullPointerException`s by ensuring critical elements in your c
 - Constructor/factory method returns
 - Method overrides / interface implementation null contract checks
 
-### 🚀 Next items to implement
-
-1. **Annotation conflicts**
-    - Detect conflicting annotations (e.g., `@Nullable` vs `@NotNull`) on the same element.
-
-2. **Default values in records / enums / parameters**
-    - Ensure default initializations respect `@NotNull` contracts.
-    -
-
----
 
 ## Usage
 

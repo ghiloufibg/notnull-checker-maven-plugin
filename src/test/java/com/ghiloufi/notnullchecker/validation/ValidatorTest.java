@@ -4,10 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.ghiloufi.notnullchecker.infrastructure.ioc.PluginContainer;
 import com.ghiloufi.notnullchecker.plugin.PluginTestConfig;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 @PluginTestConfig
 public class ValidatorTest {

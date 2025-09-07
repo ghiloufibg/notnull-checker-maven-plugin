@@ -48,6 +48,8 @@ public class PluginModule extends AbstractModule {
 
     ParserConfiguration config = new ParserConfiguration();
 
+    config.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
+
     config.setSymbolResolver(new JavaSymbolSolver(typeSolver));
 
     return new JavaParser(config);

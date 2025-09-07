@@ -149,4 +149,15 @@ public class SourceScannerTest {
 
     assertEquals(2, count, "Should detect lambda returning null");
   }
+
+  @Test
+  void should_find_record_params() throws Exception {
+    int constructorParameterCount =
+        scanner.scan(srcDir).stream()
+            .filter(candidate -> candidate.kind() == ViolationCandidateEnum.RECORD_COMPONENT)
+            .toList()
+            .size();
+
+    assertEquals(1, constructorParameterCount, "Should detect record parameters");
+  }
 }

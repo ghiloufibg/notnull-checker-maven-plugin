@@ -53,12 +53,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-project-info-reports-plugin</artifactId>
-            <version>3.9.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-core</artifactId>
             <version>3.27.0</version>
@@ -138,6 +132,37 @@
                 <configuration>
                     <useModulePath>false</useModulePath>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>3.2.2</version>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>install</goal>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <projectsDirectory>${basedir}/src/it</projectsDirectory>
+                            <cloneProjectsTo>${project.build.directory}/it-target</cloneProjectsTo>
+                            <settingsFile>${basedir}/src/it/settings.xml</settingsFile>
+                            <goals>
+                                <goal>validate</goal>
+                            </goals>
+                            <properties>
+                                <notnull-checker.version>${project.version}</notnull-checker.version>
+                            </properties>
+                            <ignoreFailures>false</ignoreFailures>
+                            <streamLogsOnFailures>false</streamLogsOnFailures>
+                            <postBuildHookScript>verify</postBuildHookScript>
+                            <parallelThreads>2C</parallelThreads>
+                            <streamLogsOnFailures>true</streamLogsOnFailures>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
